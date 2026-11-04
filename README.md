@@ -16,6 +16,25 @@ goes back. The result gets one added line saying what happened.
   and turns the answer into clicks. It also holds `BLOCKLIST`, the sites the proxy
   never solves on. It works as a CLI too: `captcha-solve.py --url <page> <screenshot.png>`.
 
+## Setup
+
+1. **Get an OpenRouter key.** Create one at https://openrouter.ai/settings/keys and add a few dollars of credit (a solve costs a fraction of a cent). Put it in your shell profile:
+   ```sh
+   export OPENROUTER_API_KEY=sk-or-...
+   ```
+2. **Let Claude Code install the rest.** Paste this prompt:
+   ```text
+   Set up captcha-proxy for your browser. Clone https://github.com/curusarn/captcha-proxy
+   to ~/git/captcha-proxy and install chrome-devtools-mcp (npm). Register a user-scope MCP
+   server named chrome-devtools that runs
+     python3 ~/git/captcha-proxy/captcha-proxy.py chrome-devtools-mcp --headless --experimentalVision
+       --chromeArg="--user-agent=<a normal, non-headless Chrome user agent for my installed Chrome version>"
+   with OPENROUTER_API_KEY passed through from my environment. Then run
+     python3 ~/git/captcha-proxy/selftest.py <that same command>
+   and show me its RESULT line. It should say PASS.
+   ```
+   Restart Claude Code afterwards. From then on, a CAPTCHA in that browser is solved before the tool result reaches Claude.
+
 ## Use
 
 ```sh
