@@ -10,7 +10,7 @@ Don't stress your Claude with CAPTCHAs. captcha-proxy sends every CAPTCHA your C
    ```sh
    export OPENROUTER_API_KEY=sk-or-...
    ```
-2. **Choose site blocklist** The proxy won't solve on sites in `CAPTCHA_BLOCKLIST`. Set it in your shell profile:
+2. **Choose site blocklist.** The proxy won't solve on sites in `CAPTCHA_BLOCKLIST`. Set it in your shell profile:
    ```sh
    export CAPTCHA_BLOCKLIST="default, example.com, login.example.org"   # built-in list of 81 sites plus 2 sites
    export CAPTCHA_BLOCKLIST="accounts.google.com, slack.com"            # only these 2 sites
