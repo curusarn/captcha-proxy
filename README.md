@@ -4,7 +4,7 @@
 
 Don't stress your Claude with CAPTCHAs. captcha-proxy sends every CAPTCHA your Claude's browser hits to GLM, or any other vision model on OpenRouter, and clicks the answer, so your Claude gets a clean sign-in.
 
-## Setup
+## Set it up with a single prompt
 
 1. **Get an OpenRouter key** at https://openrouter.ai/settings/keys and add a few dollars of credit (expect $0.3 per 100 captchas). Set it in your shell profile:
    ```sh
