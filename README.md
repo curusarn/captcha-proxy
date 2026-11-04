@@ -30,6 +30,8 @@ OPENROUTER_API_KEY=sk-or-... python3 captcha-proxy.py \
   (reasoning effort, default `minimal`, about 4 s a round).
 - Log: `~/.cache/captcha-proxy.log`.
 
+Check a setup end to end with `python3 selftest.py <browser MCP command…>`. It opens Google's reCAPTCHA demo page through the proxy, submits the form and passes when Google says "Verification Success".
+
 Python 3 standard library only.
 
 Use it for an agent's normal tasks with your own accounts, never for bulk sign-ups,
