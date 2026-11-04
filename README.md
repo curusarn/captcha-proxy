@@ -18,7 +18,7 @@ goes back. The result gets one added line saying what happened.
 
 ## Setup
 
-1. **Get an OpenRouter key** at https://openrouter.ai/settings/keys and add a few dollars of credit (a solve costs a fraction of a cent). Set it in your shell profile:
+1. **Get an OpenRouter key** at https://openrouter.ai/settings/keys and add a few dollars of credit. A CAPTCHA costs about $0.003 to solve, or about $3–4 per 1,000: each GLM round is about $0.001 and a solve takes 2–6 rounds. A page without a challenge costs nothing. Set it in your shell profile:
    ```sh
    export OPENROUTER_API_KEY=sk-or-...
    ```
