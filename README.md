@@ -18,13 +18,13 @@ goes back. The result gets one added line saying what happened.
 
 ## Setup
 
-1. **Get an OpenRouter key** at https://openrouter.ai/settings/keys and add a few dollars of credit. A CAPTCHA costs about $0.003 to solve, or about $3–4 per 1,000: each GLM round is about $0.001 and a solve takes 2–6 rounds. A page without a challenge costs nothing. Set it in your shell profile:
+1. **Get an OpenRouter key** at https://openrouter.ai/settings/keys and add a few dollars of credit (expect $0.3 per 100 captchas). Set it in your shell profile:
    ```sh
    export OPENROUTER_API_KEY=sk-or-...
    ```
-2. **Adjust the site blocklist** (optional). The proxy never solves on the built-in `BLOCKLIST` in `captcha-solve.py`: big account sign-ins, payments, government sites and our competitors. To change it, set `CAPTCHA_BLOCKLIST` in your shell profile too:
+2. **Choose site blocklist** The proxy won't solve on sites in `CAPTCHA_BLOCKLIST`. Set it in your shell profile:
    ```sh
-   export CAPTCHA_BLOCKLIST="default, example.com, login.example.org"   # the built-in list plus 2 sites
+   export CAPTCHA_BLOCKLIST="default, example.com, login.example.org"   # built-in list of 81 sites plus 2 sites
    export CAPTCHA_BLOCKLIST="accounts.google.com, slack.com"            # only these 2 sites
    export CAPTCHA_BLOCKLIST=""                                          # no blocklist
    ```
