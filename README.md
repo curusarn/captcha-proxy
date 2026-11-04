@@ -1,5 +1,7 @@
 # captcha-proxy
 
+![Claude asks Chrome to sign in; the website answers with a CAPTCHA; Chrome sends a screenshot to GLM and gets the clicks back; Claude gets success](docs/flow.png)
+
 Lets a browser agent get past CAPTCHAs without knowing about them. A stdio MCP
 proxy in front of [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp):
 after each click, key press or page load it looks for a visible reCAPTCHA or
@@ -38,3 +40,5 @@ Use it for an agent's normal tasks with your own accounts, never for bulk sign-u
 scraping or getting around a site's limits. Most sites' terms forbid getting past
 their bot checks, and Google and Microsoft lock accounts that sign in through
 automation. That is why their sign-ins are on the blocklist.
+
+`docs/flow.png` is rendered from `docs/flow.html` (open it in Chrome, or run Chrome headless with `--screenshot`).
