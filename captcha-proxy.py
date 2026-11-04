@@ -144,6 +144,7 @@ class Proxy:
                     "Route around it or do without.")
         log("solving", page, st)
         loop = asyncio.get_running_loop()
+        errors, last_verify = 0, None
         for rnd in range(1, MAX_ROUNDS + 1):
             png = await self.screenshot(page)
             if not png:
@@ -152,12 +153,16 @@ class Proxy:
                 d = await loop.run_in_executor(None, solver.decide, png)
             except solver.SolveError as e:
                 log("solver error", e)
-                return f"[captcha-proxy] A CAPTCHA is showing; the solver failed: {e}"
+                errors += 1
+                if errors >= 3 or "OPENROUTER_API_KEY" in str(e):
+                    return f"[captcha-proxy] A CAPTCHA is showing; the solver failed: {e}"
+                continue          # a malformed answer: look again
             log("round", rnd, json.dumps(d))
             for p in d["points"]:
                 await self.click(page, p)
-            if d["then"] == "verify" and d["verify_point"]:
-                await self.click(page, d["verify_point"])
+            last_verify = d["verify_point"] or last_verify   # GLM sometimes omits it
+            if d["then"] == "verify" and last_verify:
+                await self.click(page, last_verify)
                 await asyncio.sleep(2.5)
             elif d["then"] == "screenshot":
                 await asyncio.sleep(4 if d["points"] else 2)

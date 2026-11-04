@@ -170,7 +170,7 @@ def decide(png_bytes):
             # Picked tiles refill; verify only once a full grid shows no match.
             then = "screenshot" if pts or refilling else "verify"
         else:
-            then = "screenshot" if refilling and not pts else "verify"
+            then = "verify"   # fixed grids never refill: pick, then VERIFY
     elif kind == "none":
         then = "done"
     rnd = lambda p: [round(p[0]), round(p[1])] if p else None
