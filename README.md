@@ -49,4 +49,4 @@ A stdio MCP proxy in front of [chrome-devtools-mcp](https://github.com/ChromeDev
 Use it for an agent's normal tasks with your own accounts, never for bulk sign-ups,
 scraping or getting around a site's limits. Most sites' terms forbid getting past
 their bot checks, and Google and Microsoft lock accounts that sign in through
-automation. That is why their sign-ins are on the blocklist.
+automation. That is why their sign-ins are on the blocklist by default.
