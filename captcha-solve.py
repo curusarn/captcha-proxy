@@ -6,7 +6,8 @@ vision GLM model through OpenRouter: prints where to click_at (viewport pixels)
 and what to do next. The browser wrapper's proxy (captcha-proxy.py) runs this
 loop on its own; the CLI is for a manual round. Needs OPENROUTER_API_KEY.
 
-Exit 0: an answer to act on. 2: the site is on BLOCKLIST. 3: GLM can't read it.
+Exit 0: an answer to act on. 2: the site is blocklisted. 3: GLM can't read it.
+CAPTCHA_BLOCKLIST overrides the built-in BLOCKLIST (see blocklist()).
 """
 import argparse
 import base64
@@ -21,7 +22,7 @@ import urllib.request
 # Seeded 2026-11-04 from the risks of solving CAPTCHAs automatically; Simon
 # edits it. A CAPTCHA on these stays unsolved: the agent routes around it (an
 # API, a session we already have) or does without. An entry matches its host
-# and every subdomain.
+# and every subdomain. CAPTCHA_BLOCKLIST replaces this list (see blocklist()).
 BLOCKLIST = [
     # Sign-ins of our real accounts: Google, Microsoft and Slack flag or lock
     # accounts that sign in through automation.
@@ -91,10 +92,24 @@ class SolveError(Exception):
     pass
 
 
+def blocklist():
+    """The domains in force: CAPTCHA_BLOCKLIST when set, else BLOCKLIST.
+    CAPTCHA_BLOCKLIST is comma- or space-separated; the word "default" in it
+    adds the built-in BLOCKLIST, and an empty value blocks nothing."""
+    env = os.environ.get("CAPTCHA_BLOCKLIST")
+    if env is None:
+        return list(BLOCKLIST)
+    out = []
+    for d in env.replace(",", " ").split():
+        d = d.strip().lower().lstrip(".")
+        out += BLOCKLIST if d == "default" else [d]
+    return out
+
+
 def blocked(url):
-    """The BLOCKLIST entry that covers url's host, or None."""
+    """The blocklist entry that covers url's host, or None."""
     host = (urllib.parse.urlparse(url).hostname or "").lower()
-    for d in BLOCKLIST:
+    for d in blocklist():
         if host == d or host.endswith("." + d):
             return d
     return None

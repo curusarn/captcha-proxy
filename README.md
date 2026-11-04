@@ -28,6 +28,11 @@ OPENROUTER_API_KEY=sk-or-... python3 captcha-proxy.py \
 - The plain, non-headless user agent is optional but matters: with the headless one,
   Google challenges far more often and rejects more answers.
 - `OPENROUTER_API_KEY` stays in the proxy; the MCP and Chrome don't get it.
+- `CAPTCHA_BLOCKLIST`: your own blocklist, as comma- or space-separated domains. Each covers its subdomains, and it replaces the built-in `BLOCKLIST` in `captcha-solve.py`. Add the word `default` to keep the built-in list as well. An empty value blocks nothing.
+  ```sh
+  CAPTCHA_BLOCKLIST="default, example.com, login.example.org"   # built-in list plus two
+  CAPTCHA_BLOCKLIST="accounts.google.com, slack.com"            # only these two
+  ```
 - Optional settings: `CAPTCHA_MODEL` (default `z-ai/glm-5.3-flashx`), `CAPTCHA_EFFORT`
   (reasoning effort, default `minimal`, about 4 s a round).
 - Log: `~/.cache/captcha-proxy.log`.
