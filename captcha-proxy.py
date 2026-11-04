@@ -144,7 +144,7 @@ class Proxy:
                     "Route around it or do without.")
         log("solving", page, st)
         loop = asyncio.get_running_loop()
-        errors = 0
+        errors, last_verify = 0, None
         for rnd in range(1, MAX_ROUNDS + 1):
             png = await self.screenshot(page)
             if not png:
@@ -160,8 +160,9 @@ class Proxy:
             log("round", rnd, json.dumps(d))
             for p in d["points"]:
                 await self.click(page, p)
-            if d["then"] == "verify" and d["verify_point"]:
-                await self.click(page, d["verify_point"])
+            last_verify = d["verify_point"] or last_verify   # GLM sometimes omits it
+            if d["then"] == "verify" and last_verify:
+                await self.click(page, last_verify)
                 await asyncio.sleep(2.5)
             elif d["then"] == "screenshot":
                 await asyncio.sleep(4 if d["points"] else 2)
