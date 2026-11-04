@@ -2,19 +2,7 @@
 
 ![Claude asks Chrome to sign in; the website answers with a CAPTCHA; Chrome sends a screenshot to GLM and gets the clicks back; Claude gets success](docs/flow.png)
 
-Lets a browser agent get past CAPTCHAs without knowing about them. A stdio MCP
-proxy in front of [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp):
-after each click, key press or page load it looks for a visible reCAPTCHA or
-hCaptcha challenge, or an unticked "I'm not a robot" checkbox. When it finds one,
-it solves it with a vision GLM model through OpenRouter before the tool result
-goes back. The result gets one added line saying what happened.
-
-- `captcha-proxy.py`: the proxy and the solve loop (screenshot, decide, `click_at`,
-  VERIFY, repeat). It counts success by reCAPTCHA's own token, and re-opens a
-  challenge that Google rejected and hid.
-- `captcha-solve.py`: one round, which sends the screenshot to `z-ai/glm-5.3-flashx`
-  and turns the answer into clicks. It also holds `BLOCKLIST`, the sites the proxy
-  never solves on. It works as a CLI too: `captcha-solve.py --url <page> <screenshot.png>`.
+Don't stress your Claude with CAPTCHAs. captcha-proxy sends every CAPTCHA your Claude's browser hits to GLM, or any other vision model on OpenRouter, and clicks the answer, so your Claude gets a clean sign-in.
 
 ## Setup
 
@@ -40,9 +28,22 @@ goes back. The result gets one added line saying what happened.
      python3 ~/git/captcha-proxy/selftest.py <that same command>
    and show me its RESULT line. It should say PASS.
    ```
-   Restart Claude Code afterwards. From then on, a CAPTCHA in that browser is solved before the tool result reaches Claude.
+   Restart Claude Code. That's all: the proxy is now Claude's browser tool, so Claude uses it without being told. A CAPTCHA is solved before the tool result reaches Claude, which only sees one added line saying so.
 
-## Use
+## How it works
+
+A stdio MCP proxy in front of [chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp). After each click, key press or page load it looks for a visible reCAPTCHA or hCaptcha challenge, or an unticked "I'm not a robot" checkbox. When it finds one, it screenshots it, asks the model which tiles to click, clicks them and presses VERIFY, repeating until the CAPTCHA passes. Only then does the tool result go back to Claude.
+
+- `captcha-proxy.py`: the proxy and the solve loop (screenshot, decide, `click_at`,
+  VERIFY, repeat). It counts success by reCAPTCHA's own token, and re-opens a
+  challenge that Google rejected and hid.
+- `captcha-solve.py`: one round, which sends the screenshot to `z-ai/glm-5.3-flashx`
+  and turns the answer into clicks. It also holds `BLOCKLIST`, the sites the proxy
+  never solves on. It works as a CLI too: `captcha-solve.py --url <page> <screenshot.png>`.
+
+## Running it by hand
+
+Setup step 3 does this for you. Use it for another MCP client, or to see what runs:
 
 ```sh
 OPENROUTER_API_KEY=sk-or-... python3 captcha-proxy.py \
@@ -55,7 +56,7 @@ OPENROUTER_API_KEY=sk-or-... python3 captcha-proxy.py \
   Google challenges far more often and rejects more answers.
 - `OPENROUTER_API_KEY` stays in the proxy; the MCP and Chrome don't get it.
 - `CAPTCHA_BLOCKLIST`: your own blocklist, which replaces the built-in one (examples in Setup, step 2). The word `default` in it keeps the built-in list as well, and an empty value blocks nothing.
-- Optional settings: `CAPTCHA_MODEL` (default `z-ai/glm-5.3-flashx`), `CAPTCHA_EFFORT`
+- Optional settings: `CAPTCHA_MODEL`, any vision model on OpenRouter (default `z-ai/glm-5.3-flashx`), `CAPTCHA_EFFORT`
   (reasoning effort, default `minimal`, about 4 s a round).
 - Log: `~/.cache/captcha-proxy.log`.
 
