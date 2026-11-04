@@ -102,12 +102,19 @@ def main():
     page = int(re.search(r"^(\d+): .*\[selected\]", txt, re.M).group(1))
     ua = tool("evaluate_script", pageId=page, function="() => navigator.userAgent")
     print("user agent:", "headless" if "Headless" in ua else "plain")
-    snap = tool("take_snapshot", pageId=page)
-    uid = re.search(r'uid=(\S+) button "Submit"', snap)
-    if not uid:
-        sys.exit("selftest: no Submit button on the demo page")
-    tool("click", pageId=page, uid=uid.group(1))
-    body = tool("evaluate_script", pageId=page, function="() => document.body.innerText")
+    body = ""
+    for attempt in range(2):
+        # Submit; when the proxy only solved the CAPTCHA during that click, the
+        # form went out without the token, so submit once more.
+        snap = tool("take_snapshot", pageId=page)
+        uid = re.search(r'uid=(\S+) button "Submit"', snap)
+        if not uid:
+            sys.exit("selftest: no Submit button on the demo page")
+        clicked = tool("click", pageId=page, uid=uid.group(1))
+        body = tool("evaluate_script", pageId=page, function="() => document.body.innerText")
+        if "Verification Success" in body or "solved automatically" not in clicked:
+            break
+        print("solved during Submit: submitting again", flush=True)
     tool("close_page", pageId=page)
     stop.set()
     p.stdin.close()
