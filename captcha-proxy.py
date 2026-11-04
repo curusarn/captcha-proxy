@@ -5,7 +5,7 @@ A stdio MCP proxy in front of chrome-devtools-mcp that passes CAPTCHAs on its
 own, so agents never have to. After each tool call that can bring one up (a
 click, a key press, a navigation), it looks for a visible reCAPTCHA / hCaptcha
 challenge or an unticked challenge checkbox. If one is there and the page is
-not on captcha-solve.py's BLOCKLIST, it solves it with GLM (screenshot ->
+not blocklisted (CAPTCHA_BLOCKLIST, else BLOCKLIST in captcha-solve.py), it solves it with GLM (screenshot ->
 captcha-solve.decide -> click_at -> VERIFY, repeated) before returning the
 tool's result, with one line added saying what happened.
 
@@ -140,7 +140,7 @@ class Proxy:
         if hit:
             log("blocklisted", st["url"])
             return (f"[captcha-proxy] A CAPTCHA is showing on {st['url']}, which is on "
-                    f"the blocklist ({hit}, bin/captcha-solve.py): it was left alone. "
+                    f"the blocklist ({hit}; CAPTCHA_BLOCKLIST or captcha-solve.py): it was left alone. "
                     "Route around it or do without.")
         log("solving", page, st)
         loop = asyncio.get_running_loop()
