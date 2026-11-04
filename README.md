@@ -18,18 +18,25 @@ goes back. The result gets one added line saying what happened.
 
 ## Setup
 
-1. **Get an OpenRouter key.** Create one at https://openrouter.ai/settings/keys and add a few dollars of credit (a solve costs a fraction of a cent). Put it in your shell profile:
+1. **Get an OpenRouter key** at https://openrouter.ai/settings/keys and add a few dollars of credit (a solve costs a fraction of a cent). Set it in your shell profile:
    ```sh
    export OPENROUTER_API_KEY=sk-or-...
    ```
-2. **Let Claude Code install the rest.** Paste this prompt:
+2. **Adjust the site blocklist** (optional). The proxy never solves on the built-in `BLOCKLIST` in `captcha-solve.py`: big account sign-ins, payments, government sites and our competitors. To change it, set `CAPTCHA_BLOCKLIST` in your shell profile too:
+   ```sh
+   export CAPTCHA_BLOCKLIST="default, example.com, login.example.org"   # the built-in list plus 2 sites
+   export CAPTCHA_BLOCKLIST="accounts.google.com, slack.com"            # only these 2 sites
+   export CAPTCHA_BLOCKLIST=""                                          # no blocklist
+   ```
+3. **Let Claude Code install the rest.** Paste this prompt:
    ```text
    Set up captcha-proxy for your browser. Clone https://github.com/curusarn/captcha-proxy
    to ~/git/captcha-proxy and install chrome-devtools-mcp (npm). Register a user-scope MCP
    server named chrome-devtools that runs
      python3 ~/git/captcha-proxy/captcha-proxy.py chrome-devtools-mcp --headless --experimentalVision
        --chromeArg="--user-agent=<a normal, non-headless Chrome user agent for my installed Chrome version>"
-   with OPENROUTER_API_KEY passed through from my environment. Then run
+   with OPENROUTER_API_KEY and CAPTCHA_BLOCKLIST (if set) passed through from my environment.
+   Then run
      python3 ~/git/captcha-proxy/selftest.py <that same command>
    and show me its RESULT line. It should say PASS.
    ```
@@ -47,11 +54,7 @@ OPENROUTER_API_KEY=sk-or-... python3 captcha-proxy.py \
 - The plain, non-headless user agent is optional but matters: with the headless one,
   Google challenges far more often and rejects more answers.
 - `OPENROUTER_API_KEY` stays in the proxy; the MCP and Chrome don't get it.
-- `CAPTCHA_BLOCKLIST`: your own blocklist, as comma- or space-separated domains. Each covers its subdomains, and it replaces the built-in `BLOCKLIST` in `captcha-solve.py`. Add the word `default` to keep the built-in list as well. An empty value blocks nothing.
-  ```sh
-  CAPTCHA_BLOCKLIST="default, example.com, login.example.org"   # built-in list plus two
-  CAPTCHA_BLOCKLIST="accounts.google.com, slack.com"            # only these two
-  ```
+- `CAPTCHA_BLOCKLIST`: your own blocklist, which replaces the built-in one (examples in Setup, step 2). The word `default` in it keeps the built-in list as well, and an empty value blocks nothing.
 - Optional settings: `CAPTCHA_MODEL` (default `z-ai/glm-5.3-flashx`), `CAPTCHA_EFFORT`
   (reasoning effort, default `minimal`, about 4 s a round).
 - Log: `~/.cache/captcha-proxy.log`.
