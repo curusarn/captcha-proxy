@@ -1,8 +1,8 @@
-# captcha-proxy
+# no-captcha-proxy
 
 ![Claude asks Chrome to sign in; the website answers with a CAPTCHA; Chrome sends a screenshot to GLM and gets the clicks back; Claude gets success](docs/flow.png)
 
-Don't stress your Claude with CAPTCHAs. captcha-proxy sends every CAPTCHA your Claude's browser hits to GLM, or any other vision model on OpenRouter, and clicks the answer, so your Claude gets a clean sign-in.
+Don't stress your Claude with CAPTCHAs. no-captcha-proxy sends every CAPTCHA your Claude's browser hits to GLM, or any other vision model on OpenRouter, and clicks the answer, so your Claude gets a clean sign-in.
 
 ## Set it up with a single prompt
 
@@ -18,14 +18,14 @@ Don't stress your Claude with CAPTCHAs. captcha-proxy sends every CAPTCHA your C
    ```
 3. **Let Claude Code install the rest.** Paste this prompt:
    ```text
-   Set up captcha-proxy for your browser. Clone https://github.com/curusarn/captcha-proxy
-   to ~/git/captcha-proxy and install chrome-devtools-mcp (npm). Register a user-scope MCP
+   Set up no-captcha-proxy for your browser. Clone https://github.com/curusarn/no-captcha-proxy
+   to ~/git/no-captcha-proxy and install chrome-devtools-mcp (npm). Register a user-scope MCP
    server named chrome-devtools that runs
-     python3 ~/git/captcha-proxy/captcha-proxy.py chrome-devtools-mcp --headless --experimentalVision
+     python3 ~/git/no-captcha-proxy/captcha-proxy.py chrome-devtools-mcp --headless --experimentalVision
        --chromeArg="--user-agent=<a normal, non-headless Chrome user agent for my installed Chrome version>"
    with OPENROUTER_API_KEY and CAPTCHA_BLOCKLIST (if set) passed through from my environment.
    Then run
-     python3 ~/git/captcha-proxy/selftest.py <that same command>
+     python3 ~/git/no-captcha-proxy/selftest.py <that same command>
    and show me its RESULT line. It should say PASS.
    ```
    Restart Claude Code. That's all: the proxy is now Claude's browser tool, so Claude uses it without being told. A CAPTCHA is solved before the tool result reaches Claude, which only sees one added line saying so.
