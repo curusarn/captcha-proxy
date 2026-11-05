@@ -130,6 +130,9 @@ def ask(png_bytes):
         # Default reasoning spent ~4000 tokens (34 s) per round, past the
         # challenge's 2-minute expiry; minimal answers in ~4 s, as accurate.
         "reasoning": {"effort": os.environ.get("CAPTCHA_EFFORT", "minimal")},
+        # Zero data retention: a page screenshot can show anything, so OpenRouter
+        # may route it only to endpoints that keep no prompts.
+        "provider": {"zdr": True},
         "messages": [{"role": "user", "content": [
             {"type": "text", "text": PROMPT},
             {"type": "image_url", "image_url": {
