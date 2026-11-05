@@ -34,7 +34,8 @@ LOG = os.path.expanduser("~/.cache/captcha-proxy.log")
 # (an invisible reCAPTCHA pops its challenge a moment after a submit click).
 WATCH = {"click": True, "click_at": True, "press_key": True, "fill_form": True,
          "type_text": True, "navigate_page": False, "new_page": False}
-MAX_ROUNDS = 10
+# When Google distrusts the IP it chains new challenges forever; 20 rounds did no better than 10 (2026-11-05).
+MAX_ROUNDS = int(os.environ.get("CAPTCHA_MAX_ROUNDS", "10"))
 
 CHECK_JS = r"""async () => {
   const vis = f => { const r = f.getBoundingClientRect();
